@@ -46,7 +46,7 @@ A proof of concept for a presenter tracking camera with intuitive focus control 
         * NumPy (OpenBLAS backend)
     * System:
         * g_serial
-        * lightdm (Disabled)
+        * LightDM (Disabled)
 * __Machine Learning Accelerator__
     * Libraries:
         * Ultralytics (YOLOv8)
