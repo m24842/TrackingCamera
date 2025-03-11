@@ -9,7 +9,7 @@ Click for Demo Video
 
 ## Overview
 
-A proof of concept for a presenter tracking camera with intuitive focus control using a laser pointer. Prioritized laser tracking allows presenters to easily bring the camera's attention to specific regions when compared to footage typically captured from a static viewpoint, multi-region selection, or only presenter tracking.
+A proof of concept for a presenter tracking camera with intuitive 2-axis pan and tilt control using a laser pointer. By prioritizing laser tracking, presenters can easily divert the camera's attention to specific areas, allowing for more immursive remote presentations compared to footage produced by static viewpoint, multi-region selection, or solely presenter tracking systems.
 
 ## Dependencies
 
@@ -36,6 +36,7 @@ A proof of concept for a presenter tracking camera with intuitive focus control 
     * Camera status LED
     * Mini-HDMI to HDMI adapter
     * Mini-USB to USB adapter
+    * 9V Power Supply
 
 ### Software
 * __Tracking Camera__
