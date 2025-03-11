@@ -17,9 +17,9 @@ A proof of concept for a presenter tracking camera with intuitive focus control 
 * __Raspberry Pi Zero 2 W__
     * Video footage capture/streaming, 2-axis servo control, respond to remote commands
 * __mbed LPC1768__
-    * Laser control, sending commands to tracking camera (Bluetooth)
+    * Laser control, sending commands to tracking camera over Bluetooth
 * __Machine Learning Accelerator__
-    * For the purposes of this project, a MacBook with __Metal Performance Shaders__ backend was used to emulate the functionality of a dedicated hardware accelerator like the __Coral Edge TPU__
+    * For the purposes of this project, a MacBook with <ins>Metal Performance Shaders</ins> backend was used to emulate the functionality of a dedicated hardware accelerator like the <ins>Coral Edge TPU</ins>
 * __Raspberry Pi Camera v2__
     * Video footage capture
 * __Hitech Servo (x2)__
