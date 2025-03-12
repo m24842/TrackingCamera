@@ -1,4 +1,3 @@
-# d8:3a:dd:80:39:1e
 ACCELERATOR_PORT = "/dev/ttyGS0"
 BLUETOOTH_PORT = "/dev/rfcomm0"
 FRAME_BUFFER_PORT = "/dev/fb0"

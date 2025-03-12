@@ -9,7 +9,11 @@ Click for Demo Video
 
 ## Overview
 
+### Summary
 A proof of concept for a presenter tracking camera with intuitive 2-axis pan and tilt control using a laser pointer. By prioritizing laser tracking, presenters can easily divert the camera's attention to specific areas, allowing for more immursive remote presentations compared to footage produced by static viewpoint, multi-region selection, or solely presenter tracking systems.
+
+### Technical
+Presenter tracking was implemented using YOLOv8 Nano. Laser tracking was implemented using a UNet model trained on brief recordings from the tracking camera using unsupervised reinforcement learning. The reward model produces larger rewards for masks with higher probability distribution concentrations.
 
 ## Dependencies
 
@@ -22,7 +26,7 @@ A proof of concept for a presenter tracking camera with intuitive 2-axis pan and
     * For the purposes of this project, a MacBook with <ins>Metal Performance Shaders</ins> backend was used to emulate the functionality of a dedicated inference accelerator like the <ins>Coral Edge TPU</ins>
 * __Raspberry Pi Camera v2__
     * Video footage capture
-* __Hitech Servo (x2)__
+* __Hitech HS-422 Servo (x2)__
     * 2-axis camera orientation control
 * __DSD TECH HC-05__
     * Bluetooth communication between mbed and RPi
@@ -51,6 +55,8 @@ A proof of concept for a presenter tracking camera with intuitive 2-axis pan and
         * LightDM (Disabled)
 * __Inference Accelerator__
     * Libraries:
+        * PyTorch
+        * Diffusers (Hugging Face)
         * Ultralytics (YOLOv8)
         * NanoTrack
         * OpenCV
@@ -61,13 +67,8 @@ A proof of concept for a presenter tracking camera with intuitive 2-axis pan and
 * __Miscellaneous__
     * OBS Studio (HDMI Capture Card Virtual Camera)
 
-## Schematics
-
-### Tracking Camera
-<img src="media/TrackingCameraSchematic.png" alt="Tracking Camera Schematic" width="100%">
-
-### Remote
-<img src="media/RemoteSchematic.png" alt="Remote Schematic" width="100%">
+## Schematic
+<img src="media/Schematic.svg" alt="Tracking Camera Schematic" width="100%">
 
 ## Issues / Unimplemented Improvements
 

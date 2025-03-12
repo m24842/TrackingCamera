@@ -1,6 +1,6 @@
 #include "mbed.h"
 
-DigitalIn recordToggle(p17); // Button to start/stop recording
+DigitalIn trackToggle(p17); // Button to start/stop tracking
 DigitalIn changeTarget(p18); // Button to change target ID
 
 DigitalIn laserButton(p19); // Button to activate laser
@@ -8,14 +8,14 @@ DigitalOut laser(p20); // Laser power
 
 UnbufferedSerial bluetooth(p9, p10); // Bluetooth module to communicate with tracking camera
 
-bool record = false; // Initial state
+bool track = false; // Initial state
 
 /**
- * Send a command to the tracking camera to start or stop recording.
+ * Send a command to the tracking camera to start or stop tracking.
  */
-void sendRecord() {
-    record = !record;
-    if (record) {
+void sendTrack() {
+    track = !track;
+    if (track) {
         printf("START\n");
         char command[20];
         snprintf(command, sizeof(command), "START\n");
@@ -26,7 +26,7 @@ void sendRecord() {
         snprintf(command, sizeof(command), "STOP\n");
         bluetooth.write(command, strlen(command));
     }
-    while (recordToggle) wait_us(1e4);
+    while (trackToggle) wait_us(1e4);
 }
 
 /**
@@ -60,7 +60,7 @@ int main() {
 
     while (1) {
         handleLaser();
-        if (recordToggle) sendRecord();
+        if (trackToggle) sendTrack();
         if (changeTarget) sendChangeTarget();
     }
 }
