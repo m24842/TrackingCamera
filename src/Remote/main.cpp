@@ -1,9 +1,9 @@
 #include "mbed.h"
 
-DigitalIn trackToggle(p17); // Button to start/stop tracking
-DigitalIn changeTarget(p18); // Button to change target ID
+DigitalIn trackToggle(p25); // Button to start/stop tracking
+DigitalIn changeTarget(p23); // Button to change target ID
 
-DigitalIn laserButton(p19); // Button to activate laser
+DigitalIn laserButton(p24); // Button to activate laser
 DigitalOut laser(p20); // Laser power
 
 UnbufferedSerial bluetooth(p9, p10); // Bluetooth module to communicate with tracking camera
