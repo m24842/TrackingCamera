@@ -69,7 +69,7 @@ A proof of concept for a presenter tracking camera with intuitive 2-axis pan and
 ### Remote
 <img src="media/RemoteSchematic.png" alt="Remote Schematic" width="100%">
 
-## Issues/Unimplemented Improvements
+## Issues / Unimplemented Improvements
 
 * __Inconvenient External Inference__
     * Offloading inference to a completely external device is both inefficient and unreliable. A dedicated edge accelerator would allow for better performance and more efficient use of resources.
