@@ -2,7 +2,7 @@
 
 <p align="center">
  <a href="">
-  <img src="" alt="Cover Image" width="100%">
+  <img src="media/CoverImage.png" alt="Cover Image" width="100%">
  </a>
 Click for Demo Video
 </p>
@@ -18,8 +18,8 @@ A proof of concept for a presenter tracking camera with intuitive 2-axis pan and
     * Video footage capture/streaming, 2-axis servo control, respond to remote commands
 * __mbed LPC1768__
     * Laser control, sending commands to tracking camera over Bluetooth
-* __Machine Learning Accelerator__
-    * For the purposes of this project, a MacBook with <ins>Metal Performance Shaders</ins> backend was used to emulate the functionality of a dedicated hardware accelerator like the <ins>Coral Edge TPU</ins>
+* __Inference Accelerator__
+    * For the purposes of this project, a MacBook with <ins>Metal Performance Shaders</ins> backend was used to emulate the functionality of a dedicated inference accelerator like the <ins>Coral Edge TPU</ins>
 * __Raspberry Pi Camera v2__
     * Video footage capture
 * __Hitech Servo (x2)__
@@ -48,7 +48,7 @@ A proof of concept for a presenter tracking camera with intuitive 2-axis pan and
     * System:
         * g_serial
         * LightDM (Disabled)
-* __Machine Learning Accelerator__
+* __Inference Accelerator__
     * Libraries:
         * Ultralytics (YOLOv8)
         * NanoTrack
@@ -60,5 +60,10 @@ A proof of concept for a presenter tracking camera with intuitive 2-axis pan and
 * __Miscellaneous__
     * OBS Studio (HDMI Capture Card Virtual Camera)
 
-## Schematic
-<img src="" alt="Schematic Image" width="100%">
+## Schematics
+
+### Tracking Camera
+<img src="media/TrackingCameraSchematic.png" alt="Tracking Camera Schematic" width="100%">
+
+### Remote
+<img src="media/RemoteSchematic.png" alt="Remote Schematic" width="100%">

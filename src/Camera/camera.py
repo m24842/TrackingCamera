@@ -72,7 +72,7 @@ class TrackingCamera:
                     data = self.accelerator.read_until(b"END\n")
                     if data:
                         # Update object and laser detections
-                        lines = data.decode().splitlines()
+                        lines = data.decode(errors='ignore').splitlines()
                         self.objects = {}
                         for line in lines:
                             split = line.split()

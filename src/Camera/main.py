@@ -1,5 +1,6 @@
 import time
 import pigpio
+import numpy as np
 from threading import Thread
 from serial import Serial
 from config import FRAME_SHAPE, MOVEMENT_ORDER, MOTOR_V_MAX, MOTOR_A_MAX, BLUETOOTH_PORT
@@ -9,6 +10,8 @@ from camera import TrackingCamera
 # Status light (ON when camera state is START, OFF when camera state is STOP)
 rpi = pigpio.pi()
 status_light_pin = 2
+rpi.set_mode(status_light_pin, pigpio.OUTPUT)
+rpi.write(status_light_pin, 0)
 
 # Bluetooth serial connection to camera remote
 remote_bt = Serial(BLUETOOTH_PORT, baudrate=9600, timeout=1)
@@ -25,9 +28,11 @@ def video_thread():
     Continuously outputs frames from camera to frame buffer / accelerator.
     """
     while True:
-        if cap.state != "STOP":
+        try:
             cap.output_frame()
-    
+        except Exception as e:
+            print(f"Error in video_thread: {e}")
+
 def reconnect_remote():
     """
     Reconnects to remote bluetooth device if connection is lost.
@@ -78,7 +83,7 @@ def move_fn(x):
     """
     Maps motor movement to servo angle.
     """
-    return 180 * x**MOVEMENT_ORDER
+    return 180 * np.sign(x) * np.abs(x**MOVEMENT_ORDER)
 
 def motor_thread():
     """

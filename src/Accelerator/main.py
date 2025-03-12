@@ -45,6 +45,7 @@ class Accelerator():
         ret, frame = self.source.read()
         if not ret: return
         detections = self.detector.detect(frame)
+        detections = [d for d in detections if d[5] == 0] # Only track people
         tracks = self.tracker.update(detections)
         if len(tracks):
             self.objects = {}
@@ -127,10 +128,11 @@ class Accelerator():
         """
         self.detection_thread.join()
         self.data_thread.join()
+        
+accelerator = Accelerator(output_port="/dev/tty.usbmodem3101", resolution=(1920, 1080), fps=60)
 
 if __name__ == "__main__":
     try:
-        accelerator = Accelerator(output_port="/dev/tty.usbmodem3101", resolution=(1920, 1080), fps=60)
         accelerator.detect()
         accelerator.join()
     finally:

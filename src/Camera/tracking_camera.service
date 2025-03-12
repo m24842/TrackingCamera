@@ -1,0 +1,21 @@
+[Unit]
+Description=Tracking Camera Service
+After=bluetooth.service dev-ttyGS0.device
+Requires=bluetooth.service dev-ttyGS0.device
+
+[Service]
+ExecStart=/usr/bin/python /home/pi/TrackingCamera/main.py
+WorkingDirectory=/home/pi/TrackingCamera
+StandardOutput=append:/home/pi/TrackingCamera/output.log
+StandardError=append:/home/pi/TrackingCamera/error.log
+LimitCPU=infinity
+LimitMEMLOCK=infinity
+LimitNOFILE=65536
+LimitNPROC=infinity
+LimitRSS=infinity
+TimeoutStartSec=60
+TimeoutStopSec=60
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
