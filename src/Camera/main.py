@@ -87,34 +87,23 @@ def move_fn(x):
 
 def motor_thread():
     """
-    Locks camera orientation to target laser (high priority) or object position (low priority) when tracking is enabled.
+    Locks camera orientation to presenter when tracking is enabled.
+    Focuses on hands if lifted otherwise head.
     """
     x_v, x_a = 0, 0
     y_v, y_a = 0, 0
     while True:
-        # Normal object tracking
-        if cap.state == "START" and not cap.laser_detected:
-            discrepancy_x = 0.5 - cap.target_position[0]
-            discrepancy_y = 0.5 - cap.target_position[1]
+        if cap.state == "START":
+            cap_focus_x, cap_focus_y = cap.get_focus()
+            discrepancy_x = 0.5 - cap_focus_x
+            discrepancy_y = 0.5 - cap_focus_y
             x_a = min(MOTOR_A_MAX, max(-MOTOR_A_MAX, discrepancy_x - x_v))
             x_v = min(MOTOR_V_MAX, max(-MOTOR_V_MAX, x_v + x_a))
             y_a = min(MOTOR_A_MAX, max(-MOTOR_A_MAX, discrepancy_y - y_v))
             y_v = min(MOTOR_V_MAX, max(-MOTOR_V_MAX, y_v + y_a))
             motor_x.move(move_fn(x_v))
             motor_y.move(move_fn(y_v))
-            print(cap.target_id, cap.target_position, discrepancy_x, discrepancy_y, motor_x.angle, motor_y.angle, end="\r")
-        
-        # Laser tracking
-        elif cap.state == "START" and cap.laser_detected:
-            discrepancy_x = 0.5 - cap.laser_position[0]
-            discrepancy_y = 0.5 - cap.laser_position[1]
-            x_a = min(MOTOR_A_MAX, max(-MOTOR_A_MAX, discrepancy_x - x_v))
-            x_v = min(MOTOR_V_MAX, max(-MOTOR_V_MAX, x_v + x_a))
-            y_a = min(MOTOR_A_MAX, max(-MOTOR_A_MAX, discrepancy_y - y_v))
-            y_v = min(MOTOR_V_MAX, max(-MOTOR_V_MAX, y_v + y_a))
-            motor_x.move(move_fn(x_v))
-            motor_y.move(move_fn(y_v))
-            print(cap.target_id, cap.laser_position, discrepancy_x, discrepancy_y, motor_x.angle, motor_y.angle, end="\r")
+            print(cap.target_id, cap_focus_x, cap_focus_y, discrepancy_x, discrepancy_y, motor_x.angle, motor_y.angle, end="\r")
         
         time.sleep(0.01)
 

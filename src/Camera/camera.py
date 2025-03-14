@@ -39,11 +39,8 @@ class TrackingCamera:
         
         # State intialization
         self.state = "STOP"
-        self.target_id = 0
         self.objects = {}
-        self.target_position = (0.5, 0.5)
-        self.laser_detected = False
-        self.laser_position = (-1, -1)
+        self.target_id = 1
         
         # External accelerator
         self.accelerator = Serial(ACCELERATOR_PORT, baudrate=9600, timeout=1)
@@ -64,28 +61,45 @@ class TrackingCamera:
         
     def recieve_detections(self):
         """
-        Recieves object and laser detections from accelerator.
+        Recieves detections from accelerator.
         """
         while True:
             try:
                 if self.accelerator.in_waiting > 0:
                     data = self.accelerator.read_until(b"END\n")
                     if data:
-                        # Update object and laser detections
-                        lines = data.decode(errors='ignore').splitlines()
                         self.objects = {}
+                        lines = data.decode(errors='ignore').splitlines()
                         for line in lines:
                             split = line.split()
-                            if len(split) == 3 and split[0] == "LASER":
-                                _, x, y = split
-                                self.laser_detected = x != "-1" and y != "-1"
-                                self.laser_position = (float(x), float(y))
-                            elif len(split) == 4 and split[0] == "OBJECT":
-                                _, obj_id, x, y = split
-                                self.objects[int(obj_id)] = (float(x), float(y))
-                                
-                        # Update target position
-                        if self.target_id in self.objects: self.target_position = self.objects[self.target_id]
+                            # Format:
+                            # ID <id>
+                            # HEAD <x> <y>
+                            # LEFT_SHOULDER <x> <y>
+                            # RIGHT_SHOULDER <x> <y>
+                            # LEFT_HAND <x> <y>
+                            # RIGHT_HAND <x> <y>
+                            # LEFT_HIP <x> <y>
+                            # RIGHT_HIP <x> <y>
+                            if len(split) == 23:
+                                id = int(split[1])
+                                head = (float(split[3]), float(split[4]))
+                                left_shoulder = (float(split[6]), float(split[7]))
+                                right_shoulder = (float(split[9]), float(split[10]))
+                                left_hand = (float(split[12]), float(split[13]))
+                                right_hand = (float(split[15]), float(split[16]))
+                                left_hip = (float(split[18]), float(split[19]))
+                                right_hip = (float(split[21]), float(split[22]))
+
+                                self.objects[id] = {
+                                    "head": head,
+                                    "left_shoulder": left_shoulder,
+                                    "right_shoulder": right_shoulder,
+                                    "left_hand": left_hand,
+                                    "right_hand": right_hand,
+                                    "left_hip": left_hip,
+                                    "right_hip": right_hip
+                                }
                         
                         # Reset buffer if too much data
                         if self.accelerator.in_waiting > 1000: self.accelerator.reset_input_buffer()
@@ -99,20 +113,57 @@ class TrackingCamera:
         """
         frame = self.camera.capture_array()
         frame_buffer_write(frame)
+        
+    def get_focus(self):
+        """
+        Get the location of focus depending on the presenter's pose.
+        """
+        # Make sure target exists
+        if self.target_id not in self.objects:
+            sorted_ids = sorted(self.objects.keys())
+            self.target_id = sorted_ids[0] if len(sorted_ids) > 0 else 1
+        
+        target = self.objects.get(self.target_id)
+        
+        if target is None: return (0.5, 0.5)
+        
+        left_shoulder = target["left_shoulder"]
+        left_hand = target["left_hand"]
+        left_hip = target["left_hip"]
+        right_shoulder = target["right_shoulder"]
+        right_hand = target["right_hand"]
+        right_hip = target["right_hip"]
+
+        def calc_angle(a, b, c):
+            ba = np.array(a) - np.array(b)
+            bc = np.array(c) - np.array(b)
+            norm_ba = np.linalg.norm(ba)
+            norm_bc = np.linalg.norm(bc)
+            if norm_ba == 0 or norm_bc == 0:
+                return 0
+            cos_angle = np.dot(ba, bc) / (norm_ba * norm_bc)
+            cos_angle = np.clip(cos_angle, -1.0, 1.0)  # Ensure value is within valid range
+            angle = np.arccos(cos_angle)
+            return np.degrees(angle)
+
+        left_angle = calc_angle(left_hand, left_shoulder, left_hip)
+
+        right_angle = calc_angle(right_hand, right_shoulder, right_hip)
+        
+        if left_angle > 70 or right_angle > 70:
+            focus = left_hand if left_angle > right_angle else right_hand
+        else: focus = target["head"]
+                
+        return focus
     
     def roll_target_id(self):
         """
-        Increment target object ID if possible, otherwise set to first object ID.
+        Increment target ID.
         """
-        try:
-            sorted_ids = sorted(self.objects.keys())
-            if self.target_id in self.objects:
-                self.target_id = sorted_ids[(sorted_ids.index(self.target_id) + 1) % len(sorted_ids)]
-            else:
-                self.target_id = sorted_ids[0]
-            self.target_position = self.objects[self.target_id]
-        except Exception as e:
-            print(f"Camera thread error: {e}")
+        sorted_ids = sorted(self.objects.keys())
+        if self.target_id not in sorted_ids:
+            self.target_id = sorted_ids[0] if len(sorted_ids) > 0 else 1
+        self.target_id = sorted_ids[(sorted_ids.index(self.target_id) + 1) % len(sorted_ids)]
     
     def stop(self):
         """

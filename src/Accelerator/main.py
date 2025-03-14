@@ -3,10 +3,9 @@ import time
 import numpy as np
 from threading import Thread
 from serial import Serial
-from nanotrack import NanoTrack, YOLOv8Detector
-
-Y_BIAS = 0.1 # Focus on upper part of objects
-LASER_THRESHOLD = 255
+from ultralytics import YOLO
+from nanotrack import NanoTrack
+import torch
 
 class Accelerator():
     """
@@ -18,14 +17,13 @@ class Accelerator():
         
         # State initialization
         self.objects = {}
-        self.laser_position = (-1, -1)
         
         # Object detection and tracking modules
-        self.detector = YOLOv8Detector(model_path="src/Accelerator/yolov8n.pt", device='mps')
+        self.detector = YOLO("src/Accelerator/yolo11n-pose.pt").to('mps')
         self.tracker = NanoTrack()
         
         # Camera source
-        self.source = cv2.VideoCapture(1) # OBS Virtual Camera
+        self.source = cv2.VideoCapture(0) # OBS Virtual Camera
         
         # Output connection back to tracking camera
         self.output_port = output_port
@@ -38,56 +36,64 @@ class Accelerator():
         # self.detection_thread.start()
         self.data_thread.start()
     
-    def detect_objects(self):
-        """
-        Detects and updates object positions.
-        """
-        ret, frame = self.source.read()
-        if not ret: return
-        detections = self.detector.detect(frame)
-        detections = [d for d in detections if d[5] == 0] # Only track people
-        tracks = self.tracker.update(detections)
-        if len(tracks):
-            self.objects = {}
-            # Get IDs and biased positions of objects
-            for track in tracks:
-                x1, y1, x2, y2, _, track_id = track[:6]
-                self.objects[int(track_id)] = ((x1 + x2) / 2) / self.resolution[0], min(1, Y_BIAS + 1 - ((y1 + y2) / 2) / self.resolution[1])
-    
-    def detect_laser(self):
-        """
-        Detects and updates laser position.
-        """
-        ret, frame = self.source.read()
-        if not ret: return
-        
-        # Laser detection using thresholding
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        lower_red1 = np.array([0, 250, 100])
-        upper_red1 = np.array([10, 255, 255])
-        lower_red2 = np.array([160, 250, 100])
-        upper_red2 = np.array([179, 255, 255])
-        
-        mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
-        mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
-        mask = cv2.bitwise_or(mask1, mask2)
-        filtered_frame = mask
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(filtered_frame)
-        
-        # print(max_val)
-        # cv2.imshow("", mask)
-        # cv2.waitKey(1)
-        
-        if max_val >= LASER_THRESHOLD: self.laser_position = (max_loc[0]) / self.resolution[0], 1 - (max_loc[1]) / self.resolution[1]
-        else: self.laser_position = (-1, -1)
-    
     def detect(self):
         """
-        Continuously detects objects and laser.
+        Detects and updates object keypoints.
         """
         while True:
-            self.detect_objects()
-            self.detect_laser()
+            ret, frame = self.source.read()
+            if not ret: continue
+        
+            detections = self.detector(frame, stream=True, verbose=False)
+            
+            track_bboxes = []
+            track_poses = []
+            sample_frame = frame.copy()
+            for detection in detections:
+                if len(detection.boxes.xyxy) == 0: continue
+                track_bbox = torch.cat((detection.boxes.xyxy[0], detection.boxes.conf, detection.boxes.cls)).cpu().numpy()
+                track_bboxes.append(track_bbox)
+                
+                if detection.keypoints is None: continue
+                
+                sample_frame = detection.plot()
+                
+                object = detection.keypoints.xy[0]
+                
+                head = object[0].cpu().numpy() / np.array(self.resolution)
+                
+                left_shoulder = object[5].cpu().numpy() / np.array(self.resolution)
+                right_shoulder = object[6].cpu().numpy() / np.array(self.resolution)
+                
+                left_hand = object[9].cpu().numpy() / np.array(self.resolution)
+                right_hand = object[10].cpu().numpy() / np.array(self.resolution)
+                
+                left_hip = object[11].cpu().numpy() / np.array(self.resolution)
+                right_hip = object[12].cpu().numpy() / np.array(self.resolution)
+                
+                track_poses.append({
+                    "head": head,
+                    "left_shoulder": left_shoulder,
+                    "right_shoulder": right_shoulder,
+                    "left_hand": left_hand,
+                    "right_hand": right_hand,
+                    "left_hip": left_hip,
+                    "right_hip": right_hip
+                })
+            
+            self.tracker.update(track_bboxes)
+            
+            self.objects = {}
+            for track in self.tracker.tracks:
+                track_bbox, track_id = track["bbox"], track["id"]
+                idx = next((i for i, bbox in enumerate(track_bboxes) if np.array_equal(bbox, track_bbox)), None)
+                if idx is not None:
+                    self.objects[track_id] = track_poses[idx]
+
+            sample_frame = cv2.resize(sample_frame, (self.resolution[0] // 4, self.resolution[1] // 4))
+            cv2.imshow("Sample Frame", sample_frame)
+            cv2.waitKey(1)
+            
             time.sleep(1 / self.fps)
     
     def reconnect(self):
@@ -107,15 +113,9 @@ class Accelerator():
         """
         while True:
             try:
-                # Send laser position
-                laser_x, laser_y = self.laser_position
-                self.output.write(f"LASER {laser_x} {laser_y}\n".encode())
-                print(f"LASER {laser_x} {laser_y}", end="\r")
-
-                # Send object ids and positions
-                for obj_id, (obj_x, obj_y) in self.objects.items():
-                    self.output.write(f"OBJECT {obj_id} {obj_x} {obj_y}\n".encode())
-                
+                for id, object in self.objects.items():
+                    print(object, end='\033[9999F', flush=True)
+                    self.output.write(f"ID {id} {' '.join([f'{key.upper()} {value[0]} {value[1]}' for key, value in object.items()])}\n".encode())
                 self.output.write(b"END\n")
             except Exception as e:
                 print(f"Error: {e}")

@@ -9,11 +9,7 @@ Click for Demo Video
 
 ## Overview
 
-### Summary
-A proof of concept for a presenter tracking camera with intuitive 2-axis pan and tilt control using a laser pointer. By prioritizing laser tracking, presenters can easily divert the camera's attention to specific areas, allowing for more immursive remote presentations compared to footage produced by static viewpoint, multi-region selection, or solely presenter tracking systems.
-
-### Technical
-Presenter tracking was implemented using YOLOv8 Nano. Laser tracking was implemented using a UNet model trained on brief recordings from the tracking camera using unsupervised reinforcement learning. The reward model produces larger rewards for masks with higher probability distribution concentrations.
+A proof of concept for a presenter tracking camera with intuitive gesture controlled 2-axis pan and tilt. By prioritizing gesture control, presenters can easily divert the camera's attention to specific areas, allowing for more immursive remote presentations compared to footage produced by static viewpoint, multi-region selection, or solely presenter tracking systems.
 
 ## Dependencies
 
@@ -23,6 +19,7 @@ Presenter tracking was implemented using YOLOv8 Nano. Laser tracking was impleme
 * __mbed LPC1768__
     * Laser control, sending commands to tracking camera over Bluetooth
 * __Inference Accelerator__
+    * Presenter and gesture detection
     * For the purposes of this project, a MacBook with <ins>Metal Performance Shaders</ins> backend was used to emulate the functionality of a dedicated inference accelerator like the <ins>Coral Edge TPU</ins>
 * __Raspberry Pi Camera v2__
     * Video footage capture
@@ -56,8 +53,7 @@ Presenter tracking was implemented using YOLOv8 Nano. Laser tracking was impleme
 * __Inference Accelerator__
     * Libraries:
         * PyTorch
-        * Diffusers (Hugging Face)
-        * Ultralytics (YOLOv8)
+        * Ultralytics (YOLOv11)
         * NanoTrack
         * OpenCV
         * NumPy
@@ -72,6 +68,8 @@ Presenter tracking was implemented using YOLOv8 Nano. Laser tracking was impleme
 
 ## Issues / Unimplemented Improvements
 
+* __Inpractical Laser Control__
+    * The original goal of this project was to guide the camera's focus using a laser rather than gestures as it would allow for longer range control. However, the combination of significant camera noise and a low power laser (for safety reasons) made the task of reliably detecting a laser point impractical. Potentially with a higher quality camera or dedicated low exposure camera, reliability could be improved to usable standards.
 * __Inconvenient External Inference__
     * Offloading inference to a completely external device is both inefficient and unreliable. A dedicated edge accelerator would allow for better performance and more efficient use of resources.
 * __Footage Quality__
