@@ -2,7 +2,7 @@
 
 <p align="center">
  <a href="">
-  <img src="media/CoverImage.png" alt="Cover Image" width="100%">
+  <img src="media/images/TrackingCamera_Render.png" alt="Cover Image" width="100%">
  </a>
 Click for Demo Video
 </p>
@@ -64,7 +64,7 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
     * OBS Studio (HDMI Capture Card Virtual Camera)
 
 ## Schematic
-<img src="media/Schematic.svg" alt="Tracking Camera Schematic" width="100%">
+<img src="media/images/Schematic.svg" alt="Tracking Camera Schematic" width="100%">
 
 ## Issues / Unimplemented Improvements
 
