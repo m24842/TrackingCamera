@@ -1,10 +1,12 @@
 <h1 align="center">GT ECE 4180 Final Project Spring 2025</h1>
 
 <p align="center">
- <a href="">
-  <img src="media/images/TrackingCamera_Render.png" alt="Cover Image" width="100%">
- </a>
-Click for Demo Video
+    <a href="">
+        <div style="border: 3px solid red; border-radius: 10px; display: inline-block;">
+            <img src="media/images/TrackingCamera_Render.png" alt="Cover Image" width="100%">
+        </div>
+    </a>
+    Click for Demo Video
 </p>
 
 ## Overview
