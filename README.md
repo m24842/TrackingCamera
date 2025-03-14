@@ -2,7 +2,7 @@
 
 <p align="center">
     <a href="">
-        <img src="media/images/TrackingCamera_Render.png" alt="Cover Image" width="100%">
+        <img src="media/images/Render.png" alt="Cover Image" width="100%">
     </a>
     Click for Demo Video
 </p>
@@ -14,6 +14,8 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
 ## Dependencies
 
 ### Hardware
+<img src="media/images/Assembled_Hardware.png" alt="Assembled Hardware" width="100%">
+
 * __Raspberry Pi Zero 2 W__
     * Video footage capture/streaming, 2-axis servo control, respond to remote commands
 * __mbed LPC1768__
@@ -64,7 +66,7 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
     * OBS Studio (HDMI Capture Card Virtual Camera)
 
 ## Schematic
-<img src="media/images/Schematic.svg" alt="Tracking Camera Schematic" width="100%">
+<img src="media/images/Schematic.svg" alt="System Schematic" width="100%">
 
 ## Issues / Unimplemented Improvements
 
