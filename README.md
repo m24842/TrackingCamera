@@ -2,7 +2,7 @@
 
 <p align="center">
     <a href="">
-        <img src="media/images/Render.png" alt="Cover Image" width="100%">
+        <img src="media/images/Cover_Image.png" alt="Cover Image" width="100%">
     </a>
     Click for Demo Video
 </p>
