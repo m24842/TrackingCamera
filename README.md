@@ -2,9 +2,7 @@
 
 <p align="center">
     <a href="">
-        <div style="border: 3px solid red; border-radius: 10px; display: inline-block;">
-            <img src="media/images/TrackingCamera_Render.png" alt="Cover Image" width="100%">
-        </div>
+        <img src="media/images/TrackingCamera_Render.png" alt="Cover Image" width="100%">
     </a>
     Click for Demo Video
 </p>
