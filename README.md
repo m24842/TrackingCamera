@@ -39,6 +39,7 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
     * Camera status LED
     * Mini-HDMI to HDMI adapter
     * Mini-USB to USB adapter
+    * 32GB SD Card
     * 5V Power Bank
     * 9V Power Supply
 
