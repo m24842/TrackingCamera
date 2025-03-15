@@ -67,7 +67,7 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
     * OBS Studio (HDMI Capture Card Virtual Camera)
 
 ## Schematic
-<img src="media/images/Schematic.svg" alt="System Schematic" width="100%">
+<img src="media/images/Schematic.png" alt="System Schematic" width="100%">
 
 ## Issues / Unimplemented Improvements
 
