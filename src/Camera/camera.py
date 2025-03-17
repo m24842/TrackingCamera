@@ -2,7 +2,7 @@ import numpy as np
 from serial import Serial
 from picamera2 import Picamera2
 from threading import Thread
-from config import ACCELERATOR_PORT, FRAME_BUFFER_PORT
+from config import ACCELERATOR_PORT, FRAME_BUFFER_PORT, HAND_SHOULDER_HIP_ANGLE
 
 # Frame buffer out to HDMI
 frame_buffer = open(FRAME_BUFFER_PORT, 'wb')
@@ -24,7 +24,7 @@ def frame_buffer_write(frame):
 
 class TrackingCamera:
     """
-    Camera for tracking objects and laser point.
+    Camera for tracking presenter.
     """
     def __init__(self, frame_shape, fps=60):
         self.frame_shape = frame_shape
@@ -73,14 +73,14 @@ class TrackingCamera:
                         for line in lines:
                             split = line.split()
                             # Format:
-                            # ID <id>
-                            # HEAD <x> <y>
-                            # LEFT_SHOULDER <x> <y>
-                            # RIGHT_SHOULDER <x> <y>
-                            # LEFT_HAND <x> <y>
-                            # RIGHT_HAND <x> <y>
-                            # LEFT_HIP <x> <y>
-                            # RIGHT_HIP <x> <y>
+                            #   ID <id>
+                            #   HEAD <x> <y>
+                            #   LEFT_SHOULDER <x> <y>
+                            #   RIGHT_SHOULDER <x> <y>
+                            #   LEFT_HAND <x> <y>
+                            #   RIGHT_HAND <x> <y>
+                            #   LEFT_HIP <x> <y>
+                            #   RIGHT_HIP <x> <y>
                             if len(split) == 23:
                                 id = int(split[1])
                                 head = (float(split[3]), float(split[4]))
@@ -150,10 +150,10 @@ class TrackingCamera:
 
         right_angle = calc_angle(right_hand, right_shoulder, right_hip)
         
-        if left_angle > 70 or right_angle > 70:
+        if left_angle > HAND_SHOULDER_HIP_ANGLE or right_angle > HAND_SHOULDER_HIP_ANGLE:
             focus = left_hand if left_angle > right_angle else right_hand
         else: focus = target["head"]
-                
+        
         return focus
     
     def roll_target_id(self):

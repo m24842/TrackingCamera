@@ -1,6 +1,7 @@
 ACCELERATOR_PORT = "/dev/ttyGS0"
 BLUETOOTH_PORT = "/dev/rfcomm0"
 FRAME_BUFFER_PORT = "/dev/fb0"
-FRAME_SHAPE = (1920, 1080) # Set in /boot/firmware/config.txt
+FRAME_SHAPE = (1920, 1080) # Set in config.txt
 MOTOR_V_MAX, MOTOR_A_MAX = 1e0, 1e-2
 MOVEMENT_ORDER = 2
+HAND_SHOULDER_HIP_ANGLE = 70

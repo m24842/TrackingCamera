@@ -62,9 +62,9 @@ def recieve_data():
 def remote_thread():
     """
     Continuously recieves commands from camera remote.
-    START: Start object tracking
-    STOP: Stop object tracking
-    CHANGE: Increment target object ID
+    START: Start presenter tracking
+    STOP: Stop presenter tracking
+    CHANGE: Increment target ID
     """
     while True:
         command = recieve_data()

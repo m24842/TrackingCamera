@@ -1,15 +1,15 @@
 import cv2
 import time
+import torch
 import numpy as np
-from threading import Thread
 from serial import Serial
+from threading import Thread
 from ultralytics import YOLO
 from nanotrack import NanoTrack
-import torch
 
 class Accelerator():
     """
-    Accelerator for object tracking and laser detection.
+    Accelerator for presenter keypoint tracking.
     """
     def __init__(self, output_port, resolution=(1920, 1080), fps=60):
         self.resolution = resolution
@@ -43,9 +43,10 @@ class Accelerator():
         while True:
             ret, frame = self.source.read()
             if not ret: continue
-        
+
             detections = self.detector(frame, stream=True, verbose=False)
             
+            # Get keypoints of all detections and save bboxes to update tracker
             track_bboxes = []
             track_poses = []
             sample_frame = frame.copy()
@@ -56,7 +57,7 @@ class Accelerator():
                 
                 if detection.keypoints is None: continue
                 
-                sample_frame = detection.plot()
+                # sample_frame = detection.plot()
                 
                 object = detection.keypoints.xy[0]
                 
@@ -83,6 +84,7 @@ class Accelerator():
             
             self.tracker.update(track_bboxes)
             
+            # Match keypoint detections to tracker ids
             self.objects = {}
             for track in self.tracker.tracks:
                 track_bbox, track_id = track["bbox"], track["id"]
@@ -90,6 +92,7 @@ class Accelerator():
                 if idx is not None:
                     self.objects[track_id] = track_poses[idx]
 
+            # Show a scaled down version of the camera's perspective
             sample_frame = cv2.resize(sample_frame, (self.resolution[0] // 4, self.resolution[1] // 4))
             cv2.imshow("Sample Frame", sample_frame)
             cv2.waitKey(1)
@@ -109,12 +112,20 @@ class Accelerator():
     
     def send_data(self):
         """
-        Continuously sends object and laser positions to tracking camera.
+        Continuously sends presenter keypoints to tracking camera.
         """
         while True:
             try:
                 for id, object in self.objects.items():
-                    print(object, end='\033[9999F', flush=True)
+                    # Format:
+                    #   ID <id>
+                    #   HEAD <x> <y>
+                    #   LEFT_SHOULDER <x> <y>
+                    #   RIGHT_SHOULDER <x> <y>
+                    #   LEFT_HAND <x> <y>
+                    #   RIGHT_HAND <x> <y>
+                    #   LEFT_HIP <x> <y>
+                    #   RIGHT_HIP <x> <y>
                     self.output.write(f"ID {id} {' '.join([f'{key.upper()} {value[0]} {value[1]}' for key, value in object.items()])}\n".encode())
                 self.output.write(b"END\n")
             except Exception as e:
