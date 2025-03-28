@@ -21,7 +21,7 @@ remote_bt.reset_input_buffer()
 cap = TrackingCamera(FRAME_SHAPE)
 
 # Servos for 2-axis camera orientation
-motor_x, motor_y = Servo(12), Servo(13)
+motor_x, motor_y = Servo(13), Servo(12)
 
 def video_thread():
     """
@@ -31,7 +31,7 @@ def video_thread():
         try:
             cap.output_frame()
         except Exception as e:
-            print(f"Error in video_thread: {e}")
+            print(f"Video thread error: {e}")
 
 def reconnect_remote():
     """
@@ -95,8 +95,8 @@ def motor_thread():
     while True:
         if cap.state == "START":
             cap_focus_x, cap_focus_y = cap.get_focus()
-            discrepancy_x = 0.5 - cap_focus_x
-            discrepancy_y = 0.5 - cap_focus_y
+            discrepancy_x = cap_focus_x - 0.5
+            discrepancy_y = cap_focus_y - 0.5
             x_a = min(MOTOR_A_MAX, max(-MOTOR_A_MAX, discrepancy_x - x_v))
             x_v = min(MOTOR_V_MAX, max(-MOTOR_V_MAX, x_v + x_a))
             y_a = min(MOTOR_A_MAX, max(-MOTOR_A_MAX, discrepancy_y - y_v))

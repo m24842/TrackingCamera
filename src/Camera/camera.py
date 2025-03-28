@@ -163,7 +163,8 @@ class TrackingCamera:
         sorted_ids = sorted(self.objects.keys())
         if self.target_id not in sorted_ids:
             self.target_id = sorted_ids[0] if len(sorted_ids) > 0 else 1
-        self.target_id = sorted_ids[(sorted_ids.index(self.target_id) + 1) % len(sorted_ids)]
+        else:
+            self.target_id = sorted_ids[(sorted_ids.index(self.target_id) + 1) % len(sorted_ids)]
     
     def stop(self):
         """
