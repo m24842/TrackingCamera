@@ -140,7 +140,7 @@ class Accelerator():
         self.detection_thread.join()
         self.data_thread.join()
         
-accelerator = Accelerator(output_port="/dev/tty.usbmodem3101", resolution=(1920, 1080), fps=60)
+accelerator = Accelerator(output_port="/dev/tty.usbmodem101", resolution=(1920, 1080), fps=60)
 
 if __name__ == "__main__":
     try:

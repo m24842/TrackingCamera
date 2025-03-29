@@ -1,11 +1,14 @@
+import os
 import time
 import pigpio
 import numpy as np
 from threading import Thread
 from serial import Serial
-from config import FRAME_SHAPE, MOVEMENT_ORDER, MOTOR_V_MAX, MOTOR_A_MAX, BLUETOOTH_PORT
+from config import FRAME_SHAPE, MOVEMENT_ORDER, MOTOR_V_MAX, MOTOR_A_MAX, BLUETOOTH_PORT, BLUETOOTH_MAC_ADDRESS
 from servo import Servo
 from camera import TrackingCamera
+
+os.system(f"sudo rfcomm bind /dev/rfcomm0 {BLUETOOTH_MAC_ADDRESS}")
 
 # Status light (ON when camera state is START, OFF when camera state is STOP)
 rpi = pigpio.pi()
@@ -21,7 +24,7 @@ remote_bt.reset_input_buffer()
 cap = TrackingCamera(FRAME_SHAPE)
 
 # Servos for 2-axis camera orientation
-motor_x, motor_y = Servo(13), Servo(12)
+motor_x, motor_y = Servo(12), Servo(13)
 
 def video_thread():
     """
@@ -39,6 +42,7 @@ def reconnect_remote():
     """
     global remote_bt
     try:
+        os.system(f"sudo rfcomm bind /dev/rfcomm0 {BLUETOOTH_MAC_ADDRESS}")
         remote_bt.close()
         remote_bt = Serial(BLUETOOTH_PORT, baudrate=9600, timeout=1)
         remote_bt.reset_input_buffer()

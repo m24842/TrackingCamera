@@ -49,7 +49,7 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
         * pigpio
         * Picamera2
         * pySerial
-        * NumPy (OpenBLAS backend)
+        * NumPy
     * System:
         * g_serial
         * LightDM (Disabled)
