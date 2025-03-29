@@ -69,6 +69,70 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
 ## Schematic
 <img src="media/images/Schematic.png" alt="System Schematic" width="100%">
 
+## Setup Details
+
+### Raspberry Pi
+* __First boot__
+    * In ```/boot/firmware```, edit ```config.txt``` and ```cmdline.txt``` to match respective files in [src/Camera](src/Camera)
+        * __Note__: Replace ```<UUID>``` in the provided ```cmdline.txt``` with the original UUID
+    * In ```sudo raspi-config```, enable serial port and I2C
+    * Afterward, ```sudo reboot```
+* __Install Libraries__
+    ```bash
+    sudo apt install python3-picamera2
+    sudo apt install -y pigpio
+    sudo systemctl enable pigpiod
+    sudo systemctl start pigpiod
+    sudo pip install pyserial --break-system-packages
+    ```
+* __Pair Bluetooth__
+    ```bash
+    sudo systemctl start bluetooth
+    sudo systemctl enable bluetooth
+    bluetoothctl
+    scan on
+    ```
+    * Look for the MAC address of DSD TECH HC-05
+    ```bash
+    pair <MAC ADDRESS>
+    trust <MAC ADDRESS>
+    connect <MAC ADDRESS>
+    exit
+    ```
+* __Disable Desktop Manager__
+    ```bash
+    sudo systemctl stop lightdm
+    sudo systemctl disable lightdm
+    ```
+* __Create Script Files__
+    * In the root directory:
+    ```bash
+    mkdir TrackingCamera
+    cd TrackingCamera
+    ```
+    * ```sudo nano <FILENAME>.py``` for every script file in [src/Camera](src/Camera)
+* __Create Systemd Service__
+    * Create a service file: ```sudo nano /etc/systemd/system/tracking_camera.service```
+    * Edit to match [tracking_camera.service](src/Camera/tracking_camera.service)
+    ```bash
+    sudo systemctl daemon-reload
+    sudo systemctl enable tracking_camera
+    sudo systemctl start tracking_camera
+    ```
+
+### Accelerator
+* __Install Libraries__
+    * ```pip install -r src/Accelerator/requirements.txt```
+* __Run__
+    * In ```src/Accelerator/main.py```, change ```PORT``` to RPi portname
+    * ```python src/Accelerator/main.py```
+
+### Remote
+* __Upload Binary__
+    * Drag and drop [Remote.bin](src/Remote/BUILD/LPC1768/ARMC6/Remote.bin) onto mbed
+* __Run__
+    * Power cycle to start execution
+
 ## Issues / Unimplemented Improvements
 
 * __Inpractical Laser Control__

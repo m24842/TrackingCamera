@@ -1,1 +1,1 @@
-console=tty1 root=PARTUUID=442e675f-02 rootfstype=ext4 fsck.repair=yes rootwait modules-load=dwc2,g_serial vt.global_cursor_default=0 quiet splash plymouth.ignore-serial-consoles cfg80211.ieee80211_regdom=US
+console=tty1 root=PARTUUID=<UUID> rootfstype=ext4 fsck.repair=yes rootwait modules-load=dwc2,g_serial vt.global_cursor_default=0 quiet splash plymouth.ignore-serial-consoles cfg80211.ieee80211_regdom=US

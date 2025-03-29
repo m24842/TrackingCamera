@@ -7,6 +7,8 @@ from threading import Thread
 from ultralytics import YOLO
 from nanotrack import NanoTrack
 
+PORT = "/dev/tty.usbmodem101"
+
 class Accelerator():
     """
     Accelerator for presenter keypoint tracking.
@@ -19,7 +21,12 @@ class Accelerator():
         self.objects = {}
         
         # Object detection and tracking modules
-        self.detector = YOLO("src/Accelerator/yolo11n-pose.pt").to('mps')
+        device = "cpu"
+        if torch.cuda.is_available():
+            device = "cuda"
+        elif torch.backends.mps.is_available():
+            device = "mps"
+        self.detector = YOLO("src/Accelerator/yolo11n-pose.pt").to(device)
         self.tracker = NanoTrack()
         
         # Camera source
@@ -140,7 +147,7 @@ class Accelerator():
         self.detection_thread.join()
         self.data_thread.join()
         
-accelerator = Accelerator(output_port="/dev/tty.usbmodem101", resolution=(1920, 1080), fps=60)
+accelerator = Accelerator(output_port=PORT, resolution=(1920, 1080), fps=60)
 
 if __name__ == "__main__":
     try:
