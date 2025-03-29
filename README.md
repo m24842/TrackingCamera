@@ -74,7 +74,7 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
 ### Raspberry Pi
 * __First boot__
     * In ```/boot/firmware```, edit ```config.txt``` and ```cmdline.txt``` to match respective files in [src/Camera](src/Camera)
-        * __Note__: Replace ```<UUID>``` in the provided ```cmdline.txt``` with the original UUID
+        * __Note__: Replace ```<UUID>``` in the provided ```cmdline.txt``` with the original UUID from the RPi Imager
     * In ```sudo raspi-config```, enable serial port and I2C
     * Afterward, ```sudo reboot```
 * __Install Libraries__
