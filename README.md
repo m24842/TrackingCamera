@@ -11,9 +11,7 @@
 
 A proof of concept for a presenter tracking camera with intuitive gesture controlled 2-axis pan and tilt. By prioritizing gesture control, presenters can easily divert the camera's attention to specific areas, allowing for more immursive remote presentations compared to footage produced by static viewpoint, multi-region selection, or solely presenter tracking systems.
 
-## Dependencies
-
-### Hardware
+## Hardware
 <img src="media/images/Assembled_Hardware.png" alt="Assembled Hardware" width="100%">
 <img src="media/images/Pre-Assembled_Hardware.png" alt="Pre-Assembled Hardware" width="100%">
 
@@ -44,7 +42,7 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
     * 5V Power Bank
     * 9V Power Supply
 
-### Software
+## Software
 * __Tracking Camera__
     * Libraries:
         * pigpio
