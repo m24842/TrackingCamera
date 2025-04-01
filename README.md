@@ -15,6 +15,7 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
 
 ### Hardware
 <img src="media/images/Assembled_Hardware.png" alt="Assembled Hardware" width="100%">
+<img src="media/images/Pre_Assembled_Hardware.png" alt="Assembled Hardware" width="100%">
 
 * __Raspberry Pi Zero 2 W__
     * Video footage capture/streaming, 2-axis servo control, respond to remote commands
