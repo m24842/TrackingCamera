@@ -119,7 +119,7 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
     sudo systemctl start tracking_camera
     ```
 
-### Accelerator
+### Inference Accelerator
 * __Install Libraries__
     * ```pip install -r src/Accelerator/requirements.txt```
 * __Run__
