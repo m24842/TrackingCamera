@@ -1,3 +1,4 @@
+import time
 import numpy as np
 from serial import Serial
 from picamera2 import Picamera2
@@ -14,7 +15,7 @@ def frame_buffer_write(frame):
     Args:
         frame (np.ndarray(int8)): The frame to write to the frame buffer.
     """
-    frame = np.flipud(frame) # Camera is upside down
+    frame = np.flip(frame, axis=(0, 1))  # Camera is upside down
     frame = ((frame[:, :, 0].astype(np.uint16) >> 3) << 11) | ((frame[:, :, 1].astype(np.uint16) >> 2) << 5) | (frame[:, :, 2].astype(np.uint16) >> 3)
     frame = frame.flatten().tobytes()
 
@@ -29,13 +30,17 @@ class TrackingCamera:
     def __init__(self, frame_shape, fps=60):
         self.frame_shape = frame_shape
         self.fps = fps
+        self.packet_len = 1
         
         # Camera configuration
-        self.camera = Picamera2()
-        self.camera.preview_configuration.main.size = frame_shape
-        self.camera.preview_configuration.main.format = "BGR888"
-        self.camera.configure("preview")
-        self.camera.start()
+        try:
+            self.camera = Picamera2()
+            self.camera.preview_configuration.main.size = frame_shape
+            self.camera.preview_configuration.main.format = "BGR888"
+            self.camera.configure("preview")
+            self.camera.start()
+        except Exception as e:
+            print(f"Camera initialization error: {e}")
         
         # State intialization
         self.state = "STOP"
@@ -67,6 +72,7 @@ class TrackingCamera:
             try:
                 if self.accelerator.in_waiting > 0:
                     data = self.accelerator.read_until(b"END\n")
+                    self.packet_len = len(data)
                     if data:
                         self.objects = {}
                         lines = data.decode(errors='ignore').splitlines()
@@ -98,14 +104,17 @@ class TrackingCamera:
                                     "left_hand": left_hand,
                                     "right_hand": right_hand,
                                     "left_hip": left_hip,
-                                    "right_hip": right_hip
+                                    "right_hip": right_hip,
+                                    "handled": False
                                 }
                         
                         # Reset buffer if too much data
-                        if self.accelerator.in_waiting > 1000: self.accelerator.reset_input_buffer()
+                        if self.accelerator.in_waiting > 2*self.packet_len: self.accelerator.reset_input_buffer()
             except Exception as e:
                 print(f"Camera thread error: {e}")
                 self.reconnect()
+            
+            time.sleep(1 / self.fps)
     
     def output_frame(self):
         """
@@ -125,7 +134,8 @@ class TrackingCamera:
         
         target = self.objects.get(self.target_id)
         
-        if target is None: return (0.5, 0.5)
+        if target is None or target["handled"] == True: return (0.5, 0.5)
+        target["handled"] = True # Mark target as handled so servos don't execute outdated commands
         
         left_shoulder = target["left_shoulder"]
         left_hand = target["left_hand"]
@@ -133,6 +143,10 @@ class TrackingCamera:
         right_shoulder = target["right_shoulder"]
         right_hand = target["right_hand"]
         right_hip = target["right_hip"]
+        
+        if ((left_shoulder == 0 or left_hand == 0 or left_hip == 0) and
+            (right_shoulder == 0 or right_hand == 0 or right_hip == 0)):
+            return (0.5, 0.5)
 
         def calc_angle(a, b, c):
             ba = np.array(a) - np.array(b)

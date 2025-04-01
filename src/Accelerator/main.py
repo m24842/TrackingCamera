@@ -7,7 +7,7 @@ from threading import Thread
 from ultralytics import YOLO
 from nanotrack import NanoTrack
 
-PORT = "/dev/tty.usbmodem101"
+PORT = "/dev/tty.usbmodem3101"
 
 class Accelerator():
     """
@@ -134,6 +134,7 @@ class Accelerator():
                     #   LEFT_HIP <x> <y>
                     #   RIGHT_HIP <x> <y>
                     self.output.write(f"ID {id} {' '.join([f'{key.upper()} {value[0]} {value[1]}' for key, value in object.items()])}\n".encode())
+                    print(f"ID {id} {' '.join([f'{key.upper()} {value[0]} {value[1]}' for key, value in object.items()])}", end="\r")
                 self.output.write(b"END\n")
             except Exception as e:
                 print(f"Error: {e}")

@@ -4,7 +4,7 @@ import pigpio
 import numpy as np
 from threading import Thread
 from serial import Serial
-from config import FRAME_SHAPE, MOVEMENT_ORDER, MOTOR_V_MAX, MOTOR_A_MAX, BLUETOOTH_PORT, BLUETOOTH_MAC_ADDRESS
+from config import FRAME_SHAPE, MOVEMENT_ORDER, MOTOR_P_MAX, MOTOR_V_MAX, MOTOR_A_MAX, BLUETOOTH_PORT, BLUETOOTH_MAC_ADDRESS
 from servo import Servo
 from camera import TrackingCamera
 
@@ -24,7 +24,8 @@ remote_bt.reset_input_buffer()
 cap = TrackingCamera(FRAME_SHAPE)
 
 # Servos for 2-axis camera orientation
-motor_x, motor_y = Servo(12), Servo(13)
+motor_range = (90 - MOTOR_P_MAX, 90 + MOTOR_P_MAX)
+motor_x, motor_y = Servo(12, motor_range), Servo(13, motor_range)
 
 def video_thread():
     """
@@ -86,6 +87,9 @@ def remote_thread():
 def move_fn(x):
     """
     Maps motor movement to servo angle.
+    
+    Args:
+        x (float): Amount to move.
     """
     return 180 * np.sign(x) * np.abs(x**MOVEMENT_ORDER)
 

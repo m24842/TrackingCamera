@@ -80,7 +80,7 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
 * __Install Libraries__
     ```bash
     sudo apt install python3-picamera2
-    sudo apt install -y pigpio
+    sudo apt install pigpio
     sudo systemctl enable pigpiod
     sudo systemctl start pigpiod
     sudo pip install pyserial --break-system-packages
