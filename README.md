@@ -33,11 +33,13 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
 * __KY-008 Laser Module__
     * Laser pointer functionality
 * __Miscellaneous__
+    * Camera status LED
     * HDMI Video Capture Card
     * Wireless microphone
-    * Camera status LED
     * Mini-HDMI to HDMI adapter
-    * Mini-USB to USB adapter
+    * Mini-USB to USB-A adapter
+    * Ultra thin HDMI cable
+    * Micro-USB to USB-A cable
     * 32GB SD Card
     * 5V Power Bank
     * 9V Power Supply
