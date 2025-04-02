@@ -9,7 +9,7 @@
 
 ## Overview
 
-A proof of concept for a presenter tracking camera with intuitive gesture controlled 2-axis pan and tilt. By prioritizing gesture control, presenters can easily divert the camera's attention to specific areas, allowing for more immursive remote presentations compared to footage produced by static viewpoint, multi-region selection, or presenter tracking systems without gesture control.
+A proof of concept for a presenter tracking camera with intuitive gesture controlled 2-axis pan and tilt. By prioritizing gesture control over head tracking, presenters can easily divert the camera's attention to specific areas, allowing for more immursive remote presentations compared to footage produced by static viewpoint, multi-region selection, or head tracking systems without gesture control.
 
 ## Hardware
 <img src="media/images/Assembled_Hardware.png" alt="Assembled Hardware" width="100%">
@@ -134,6 +134,14 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
     * Drag and drop [Remote.bin](src/Remote/BUILD/LPC1768/ARMC6/Remote.bin) onto mbed
 * __Run__
     * Power cycle to start execution
+
+## Usage
+* __Tracking__
+    * Toggled on or off using the top ([black](media/images/Assembled_Hardware.png)) button on the remote
+* __Laser Pointer__
+    * Activated by the center ([red](media/images/Assembled_Hardware.png)) button on the remote
+* __Target Changing__
+    * Controlled by the bottom ([white](media/images/Assembled_Hardware.png)) button on the remote where every click iterates to the next target ID and eventually loops back to the first target ID
 
 ## Issues / Unimplemented Improvements
 
