@@ -87,10 +87,10 @@ def remote_thread():
 
 def move_fn(x):
     """
-    Maps motor movement to servo angle.
+    Maps distance to servo angle.
     
     Args:
-        x (float): Amount to move.
+        x (float): Distance to move.
     """
     return np.tanh(np.sign(x) * MOVEMENT_SCALE * np.abs(x**MOVEMENT_ORDER))
 
@@ -106,7 +106,6 @@ def motor_thread():
             discrepancy_y = cap_focus_y - 0.5
             motor_x.move(move_fn(MOTOR_V_MAX * discrepancy_x))
             motor_y.move(move_fn(MOTOR_V_MAX * discrepancy_y))
-            # print(cap.target_id, cap_focus_x, cap_focus_y, discrepancy_x, discrepancy_y, motor_x.angle, motor_y.angle, end="\r")
         
         time.sleep(0.01)
 

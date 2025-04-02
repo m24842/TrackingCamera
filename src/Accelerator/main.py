@@ -30,7 +30,7 @@ class Accelerator():
         self.tracker = NanoTrack()
         
         # Camera source
-        self.source = cv2.VideoCapture(0) # OBS Virtual Camera
+        self.source = cv2.VideoCapture(0) # HDMI Video Capture Card
         
         # Output connection back to tracking camera
         self.output_port = output_port

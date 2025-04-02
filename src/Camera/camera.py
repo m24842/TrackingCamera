@@ -153,7 +153,7 @@ class TrackingCamera:
             if norm_ba == 0 or norm_bc == 0:
                 return 0
             cos_angle = np.dot(ba, bc) / (norm_ba * norm_bc)
-            cos_angle = np.clip(cos_angle, -1.0, 1.0)  # Ensure value is within valid range
+            cos_angle = np.clip(cos_angle, -1.0, 1.0)
             angle = np.arccos(cos_angle)
             return np.degrees(angle)
 
@@ -162,6 +162,7 @@ class TrackingCamera:
 
         right_angle = calc_angle(right_hand, right_shoulder, (right_shoulder[0], 1.0))
         
+        # Focus on the more prominent gesture otherwise head
         if (not left_invalid and not right_invalid) and left_angle > HAND_SHOULDER_HIP_ANGLE or right_angle > HAND_SHOULDER_HIP_ANGLE:
             focus = left_hand if left_angle > right_angle else right_hand
         elif (left_invalid and not right_invalid) and right_angle > HAND_SHOULDER_HIP_ANGLE:

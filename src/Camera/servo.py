@@ -13,8 +13,9 @@ class Servo:
         self.angle = 90
         self.target_angle = 90
         self.motion_range = motion_range
-        self.running = True
         self.set_angle(self.angle)
+        
+        self.running = True
         self.motion_thread = Thread(target=self.motion_thread)
         self.motion_thread.start()
 
