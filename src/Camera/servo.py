@@ -16,15 +16,16 @@ class Servo:
         self.running = True
         self.set_angle(self.angle)
         self.motion_thread = Thread(target=self.motion_thread)
+        self.motion_thread.start()
 
     def motion_thread(self):
         """
         Smoothly adjusts the servo angle towards the target angle.
         """
         while self.running:
-            if self.angle != self.target_angle and self.angle > self.motion_range[0] and self.angle < self.motion_range[1]:
+            if self.angle != self.target_angle:
                 dir = 1 if self.target_angle > self.angle else -1
-                self.angle += min(dir * MOTOR_RESOLUTION, self.target_angle - self.angle)
+                self.angle += dir * min(MOTOR_RESOLUTION, abs(self.target_angle - self.angle))
                 self.set_angle(self.angle)
             
             time.sleep(1e-3)
@@ -36,8 +37,7 @@ class Servo:
         Args:
             angle (float): Servo angle in degrees.
         """
-        self.angle = max(self.motion_range[0], min(angle, self.motion_range[1]))
-        pulse_width = int(500 + (self.angle / 180) * 2000)
+        pulse_width = int(500 + (angle / 180) * 2000)
         self.pi.set_servo_pulsewidth(self.pin, pulse_width)
 
     def move(self, d_angle):
@@ -47,7 +47,7 @@ class Servo:
         Args:
             d_angle (float): Relative angle in degrees.
         """
-        self.target_angle += d_angle
+        self.target_angle = max(self.motion_range[0], min(self.target_angle + d_angle, self.motion_range[1]))
 
     def cleanup(self):
         """

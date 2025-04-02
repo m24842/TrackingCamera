@@ -87,15 +87,13 @@ class TrackingCamera:
                             #   RIGHT_HAND <x> <y>
                             #   LEFT_HIP <x> <y>
                             #   RIGHT_HIP <x> <y>
-                            if len(split) == 23:
+                            if len(split) == 17:
                                 id = int(split[1])
                                 head = (float(split[3]), float(split[4]))
                                 left_shoulder = (float(split[6]), float(split[7]))
                                 right_shoulder = (float(split[9]), float(split[10]))
                                 left_hand = (float(split[12]), float(split[13]))
                                 right_hand = (float(split[15]), float(split[16]))
-                                left_hip = (float(split[18]), float(split[19]))
-                                right_hip = (float(split[21]), float(split[22]))
 
                                 self.objects[id] = {
                                     "head": head,
@@ -103,8 +101,6 @@ class TrackingCamera:
                                     "right_shoulder": right_shoulder,
                                     "left_hand": left_hand,
                                     "right_hand": right_hand,
-                                    "left_hip": left_hip,
-                                    "right_hip": right_hip,
                                     "handled": False
                                 }
                         
@@ -139,14 +135,15 @@ class TrackingCamera:
         
         left_shoulder = target["left_shoulder"]
         left_hand = target["left_hand"]
-        left_hip = target["left_hip"]
         right_shoulder = target["right_shoulder"]
         right_hand = target["right_hand"]
-        right_hip = target["right_hip"]
         
-        if ((left_shoulder == 0 or left_hand == 0 or left_hip == 0) and
-            (right_shoulder == 0 or right_hand == 0 or right_hip == 0)):
-            return (0.5, 0.5)
+        # Keypoints are only valid if non-zero
+        left_invalid = left_shoulder == (0.0, 0.0) or left_hand == (0.0, 0.0)
+        right_invalid = right_shoulder == (0.0, 0.0) or right_hand == (0.0, 0.0)
+        if left_invalid and right_invalid:
+            if target["head"] == (0.0, 0.0): return (0.5, 0.5)
+            else: return target["head"]
 
         def calc_angle(a, b, c):
             ba = np.array(a) - np.array(b)
@@ -160,13 +157,19 @@ class TrackingCamera:
             angle = np.arccos(cos_angle)
             return np.degrees(angle)
 
-        left_angle = calc_angle(left_hand, left_shoulder, left_hip)
+        # Angles calculated between hand-shoulder vector and vertical
+        left_angle = calc_angle(left_hand, left_shoulder, (left_shoulder[0], 1.0))
 
-        right_angle = calc_angle(right_hand, right_shoulder, right_hip)
+        right_angle = calc_angle(right_hand, right_shoulder, (right_shoulder[0], 1.0))
         
-        if left_angle > HAND_SHOULDER_HIP_ANGLE or right_angle > HAND_SHOULDER_HIP_ANGLE:
+        if (not left_invalid and not right_invalid) and left_angle > HAND_SHOULDER_HIP_ANGLE or right_angle > HAND_SHOULDER_HIP_ANGLE:
             focus = left_hand if left_angle > right_angle else right_hand
-        else: focus = target["head"]
+        elif (left_invalid and not right_invalid) and right_angle > HAND_SHOULDER_HIP_ANGLE:
+            focus = right_hand
+        elif (not left_invalid and right_invalid) and left_angle > HAND_SHOULDER_HIP_ANGLE:
+            focus = left_hand
+        else:
+            focus = target["head"]
         
         return focus
     

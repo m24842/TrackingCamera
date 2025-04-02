@@ -76,17 +76,12 @@ class Accelerator():
                 left_hand = object[9].cpu().numpy() / np.array(self.resolution)
                 right_hand = object[10].cpu().numpy() / np.array(self.resolution)
                 
-                left_hip = object[11].cpu().numpy() / np.array(self.resolution)
-                right_hip = object[12].cpu().numpy() / np.array(self.resolution)
-                
                 track_poses.append({
                     "head": head,
                     "left_shoulder": left_shoulder,
                     "right_shoulder": right_shoulder,
                     "left_hand": left_hand,
                     "right_hand": right_hand,
-                    "left_hip": left_hip,
-                    "right_hip": right_hip
                 })
             
             self.tracker.update(track_bboxes)

@@ -4,10 +4,11 @@ import pigpio
 import numpy as np
 from threading import Thread
 from serial import Serial
-from config import FRAME_SHAPE, MOVEMENT_ORDER, MOTOR_P_MAX, MOTOR_V_MAX, MOTOR_A_MAX, BLUETOOTH_PORT, BLUETOOTH_MAC_ADDRESS
+from config import FRAME_SHAPE, MOVEMENT_ORDER, MOVEMENT_SCALE, MOTOR_X_RANGE, MOTOR_Y_RANGE, MOTOR_V_MAX, BLUETOOTH_PORT, BLUETOOTH_MAC_ADDRESS
 from servo import Servo
 from camera import TrackingCamera
 
+os.system("rfkill unblock bluetooth")
 os.system(f"sudo rfcomm bind /dev/rfcomm0 {BLUETOOTH_MAC_ADDRESS}")
 
 # Status light (ON when camera state is START, OFF when camera state is STOP)
@@ -24,8 +25,7 @@ remote_bt.reset_input_buffer()
 cap = TrackingCamera(FRAME_SHAPE)
 
 # Servos for 2-axis camera orientation
-motor_range = (90 - MOTOR_P_MAX, 90 + MOTOR_P_MAX)
-motor_x, motor_y = Servo(12, motor_range), Servo(13, motor_range)
+motor_x, motor_y = Servo(12, MOTOR_X_RANGE), Servo(13, MOTOR_Y_RANGE)
 
 def video_thread():
     """
@@ -43,6 +43,7 @@ def reconnect_remote():
     """
     global remote_bt
     try:
+        os.system("rfkill unblock bluetooth")
         os.system(f"sudo rfcomm bind /dev/rfcomm0 {BLUETOOTH_MAC_ADDRESS}")
         remote_bt.close()
         remote_bt = Serial(BLUETOOTH_PORT, baudrate=9600, timeout=1)
@@ -91,27 +92,21 @@ def move_fn(x):
     Args:
         x (float): Amount to move.
     """
-    return 180 * np.sign(x) * np.abs(x**MOVEMENT_ORDER)
+    return np.tanh(np.sign(x) * MOVEMENT_SCALE * np.abs(x**MOVEMENT_ORDER))
 
 def motor_thread():
     """
     Locks camera orientation to presenter when tracking is enabled.
     Focuses on hands if lifted otherwise head.
     """
-    x_v, x_a = 0, 0
-    y_v, y_a = 0, 0
     while True:
         if cap.state == "START":
             cap_focus_x, cap_focus_y = cap.get_focus()
             discrepancy_x = cap_focus_x - 0.5
             discrepancy_y = cap_focus_y - 0.5
-            x_a = min(MOTOR_A_MAX, max(-MOTOR_A_MAX, discrepancy_x - x_v))
-            x_v = min(MOTOR_V_MAX, max(-MOTOR_V_MAX, x_v + x_a))
-            y_a = min(MOTOR_A_MAX, max(-MOTOR_A_MAX, discrepancy_y - y_v))
-            y_v = min(MOTOR_V_MAX, max(-MOTOR_V_MAX, y_v + y_a))
-            motor_x.move(move_fn(x_v))
-            motor_y.move(move_fn(y_v))
-            print(cap.target_id, cap_focus_x, cap_focus_y, discrepancy_x, discrepancy_y, motor_x.angle, motor_y.angle, end="\r")
+            motor_x.move(move_fn(MOTOR_V_MAX * discrepancy_x))
+            motor_y.move(move_fn(MOTOR_V_MAX * discrepancy_y))
+            # print(cap.target_id, cap_focus_x, cap_focus_y, discrepancy_x, discrepancy_y, motor_x.angle, motor_y.angle, end="\r")
         
         time.sleep(0.01)
 

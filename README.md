@@ -76,10 +76,10 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
 * __First boot__
     * In ```/boot/firmware```, edit ```config.txt``` and ```cmdline.txt``` to match respective files in [src/Camera](src/Camera)
         * __Note__: Replace ```<UUID>``` in the provided ```cmdline.txt``` with the original UUID from the RPi Imager
-    * In ```sudo raspi-config```, enable serial port and I2C
     * Afterward, ```sudo reboot```
 * __Install Libraries__
     ```bash
+    sudo apt update
     sudo apt install python3-picamera2
     sudo apt install pigpio
     sudo systemctl enable pigpiod
@@ -112,6 +112,7 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
     cd TrackingCamera
     ```
     * ```sudo nano <FILENAME>.py``` for every script file in [src/Camera](src/Camera)
+        * __Note__: Replace ```BLUETOOTH_MAC_ADDRESS``` in [config.py](src/Camera/config.py) with the MAC address from the bluetooth pairing step
 * __Create Systemd Service__
     * Create a service file: ```sudo nano /etc/systemd/system/tracking_camera.service```
     * Edit to match [tracking_camera.service](src/Camera/tracking_camera.service)
