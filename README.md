@@ -9,7 +9,7 @@
 
 ## Overview
 
-A proof of concept for a presenter tracking camera with intuitive gesture controlled 2-axis pan and tilt. By prioritizing gesture control over head tracking, presenters can easily divert the camera's attention to specific areas, allowing for more immursive remote presentations compared to footage produced by static viewpoint, multi-region selection, or head tracking systems without gesture control.
+A proof of concept for a presenter tracking camera with intuitive gesture controlled 2-axis pan and tilt. By prioritizing gesture control over head tracking, presenters can easily divert the camera's attention to specific areas, allowing for more immersive remote presentations compared to footage produced by static viewpoint, multi-region selection, or head tracking systems without gesture control.
 
 ## Hardware
 <img src="media/images/Assembled_Hardware.png" alt="Assembled Hardware" width="100%">
