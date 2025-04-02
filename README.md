@@ -138,6 +138,7 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
 ## Usage
 * __Tracking__
     * Toggled on or off using the top ([black](media/images/Assembled_Hardware.png)) button on the remote
+    * Status LED is powered on when tracking is enabled
 * __Laser Pointer__
     * Activated by the center ([red](media/images/Assembled_Hardware.png)) button on the remote
 * __Target Changing__
