@@ -1,7 +1,7 @@
 <h1 align="center">GT ECE 4180 Final Project Spring 2025</h1>
 
 <p align="center">
-    <a href="https://youtu.be/z4gDbGHyYms">
+    <a href="https://youtu.be/-UD1C0mEFE8">
         <img src="media/images/Cover_Image.png" alt="Cover Image" width="100%">
     </a>
     Click for Demo Video
