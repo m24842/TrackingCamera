@@ -146,11 +146,11 @@ A proof of concept for a presenter tracking camera with intuitive gesture contro
 
 ## Issues / Unimplemented Improvements
 
-* __Inpractical Laser Control__
+* __Impractical Laser Control__
     * The original goal of this project was to guide the camera's focus using a laser rather than gestures as it would allow for longer range control. However, the combination of significant camera noise and a low power laser (for safety reasons) made the task of reliably detecting a laser point impractical. Potentially with a higher quality camera or dedicated low exposure camera, reliability could be improved to usable standards.
 * __Inconvenient External Inference__
     * Offloading inference to a completely external device is both inefficient and unreliable. A dedicated edge accelerator would allow for better performance and more efficient use of resources.
 * __Footage Quality__
     * As a proof of concept, the Raspberry Pi Camera v2's noisy frames combined with the parallel compute bottleneck of the Raspberry Pi Zero 2 W severely degrade the final recording quality. A higher quality camera and better choice of processor (ideally extensive support for parallel operations) could easily elevate the output quality to acceptable levels.
 * __Inefficient Use of Hardware__
-    * Given the simplicity of the overall system, the microcontrollers are by no means being used in an efficient manner. Choosing microcontrollers more taylored to the requirements of the system would make it much more reasonable to use.
+    * Given the simplicity of the overall system, the microcontrollers are by no means being used in an efficient manner. Choosing microcontrollers more tailored to the requirements of the system would make it much more reasonable to use.
