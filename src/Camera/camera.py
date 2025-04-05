@@ -74,7 +74,7 @@ class TrackingCamera:
                     data = self.accelerator.read_until(b"END\n")
                     self.packet_len = len(data)
                     if data:
-                        self.objects = {}
+                        objects = {}
                         lines = data.decode(errors='ignore').splitlines()
                         for line in lines:
                             split = line.split()
@@ -95,7 +95,7 @@ class TrackingCamera:
                                 left_hand = (float(split[12]), float(split[13]))
                                 right_hand = (float(split[15]), float(split[16]))
 
-                                self.objects[id] = {
+                                objects[id] = {
                                     "head": head,
                                     "left_shoulder": left_shoulder,
                                     "right_shoulder": right_shoulder,
@@ -103,6 +103,7 @@ class TrackingCamera:
                                     "right_hand": right_hand,
                                     "handled": False
                                 }
+                        self.objects = objects
                         
                         # Reset buffer if too much data
                         if self.accelerator.in_waiting > 2*self.packet_len: self.accelerator.reset_input_buffer()
