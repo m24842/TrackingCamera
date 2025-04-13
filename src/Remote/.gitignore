@@ -1,0 +1,11 @@
+.build
+.mbed
+projectfiles
+*.py*
+mbed-os
+BUILD/*
+!BUILD/LPC1768/
+BUILD/LPC1768/*
+!BUILD/LPC1768/ARMC6/
+BUILD/LPC1768/ARMC6/*
+!BUILD/LPC1768/ARMC6/Remote.bin
